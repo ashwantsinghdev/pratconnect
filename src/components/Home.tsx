@@ -6,7 +6,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center px-6 py-20 md:py-32">
         <h1 className="text-4xl md:text-6xl font-bold mb-6 text-pink-400">
-          Welcome to Besties
+          Welcome to PractConnect
         </h1>
         <p className="text-lg md:text-xl max-w-2xl text-gray-200 mb-8">
           Connect, chat, and share moments with your best friends — wherever
