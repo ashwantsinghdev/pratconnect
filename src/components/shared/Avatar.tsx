@@ -8,7 +8,7 @@ interface AvatarInterface {
   subtitleColor?: string;
   size?: "lg" | "md";
   key?: string | null;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const Avatar: FC<AvatarInterface> = ({
