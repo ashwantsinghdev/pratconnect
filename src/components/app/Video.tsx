@@ -1,6 +1,6 @@
 export interface onOfferInterface {
     offer:RTCSessionDescriptionInit;
-    from:unknown;
+    from:any;
     type:"video" | "audio" |"chat"
 }
 
