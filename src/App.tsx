@@ -38,12 +38,12 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
 
-          {/* <Route element={<RedirectGuard />}> */}
+          <Route element={<RedirectGuard />}>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
-          {/* </Route> */}
+          </Route>
 
-          {/* <Route element={<AuthGuard />}> */}
+          <Route element={<AuthGuard />}>
             <Route path="/app" element={<Layout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="my-posts" element={<Posts />} />
@@ -51,7 +51,7 @@ const App = () => {
               <Route path="video-chat/:id" element={<Video />} />
               <Route path="audio-chat/:id" element={<Audio />} />
               <Route path="chat/:id" element={<Chat />} />
-            {/* </Route> */}
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
