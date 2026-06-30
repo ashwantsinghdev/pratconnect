@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-const Context=createContext<unknown>(null)
+const Context=createContext<any>(null)
 
 export default Context
 
