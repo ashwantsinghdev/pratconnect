@@ -233,7 +233,7 @@ const Layout = () => {
             {leftAsideSize === collapseSize ? (
               <i className="ri-user-fill text-xl text-white animate__animated animate__fadeIn"></i>
             ) : (
-              <div className="animate__animated animate__fadeIn">
+              <div className="animate__animated animate__fadeIn capitalize">
                 {session && (
                   <Avatar
                     title={session.fullname}
