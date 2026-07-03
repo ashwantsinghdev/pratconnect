@@ -98,7 +98,7 @@ const Layout = () => {
     }
   };
 
-  const { error } = useSWR("/auth/-refresh-token", Fetcher, {
+  const { error } = useSWR("/auth/refresh-token", Fetcher, {
     refreshInterval: EightMinutesInMs,
     shouldRetryOnError: false,
   });
