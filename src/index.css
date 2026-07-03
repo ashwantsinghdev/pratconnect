@@ -1,15 +1,34 @@
 @import "tailwindcss";
-@import "tailwindcss";
 
-@import "tailwindcss";
+@layer base {
+  :root {
+    --background: 40 33% 93%;
+    /* #F3EEE4 warm cream page bg */
+    --foreground: 220 20% 10%;
+    /* near-black text */
 
-@import "tw-animate-css";
+    --card: 42 40% 97%;
+    /* #FAF7F0 card background */
+    --card-foreground: 220 20% 10%;
 
-@import "shadcn/tailwind.css";
+    --primary: 220 20% 10%;
+    /* #14151A near-black navy buttons */
+    --primary-foreground: 40 33% 96%;
+    /* cream text on dark buttons */
 
-@import "@fontsource-variable/inter";
+    --muted: 40 15% 85%;
+    --muted-foreground: 35 8% 52%;
+    /* #8A8578 warm gray labels */
 
-@custom-variant dark (&:is(.dark *));
+    --border: 40 20% 85%;
+    /* #E5DFD1 soft input borders */
+    --input: 40 20% 85%;
+    --ring: 220 20% 10%;
+
+    --radius: 1rem;
+    /* base 16px radius, cards/buttons scale from this */
+  }
+}
 
 .swiper {
   width: 100%;
