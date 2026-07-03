@@ -1,13 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
-import Button from "./shared/Button";
-import Card from "./shared/Card";
-import Input from "./shared/Input";
+import { Button } from "../components/shared/Button";
+import { Label } from "../components/shared/Label";
+import { Input } from "../components/shared/Input";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/shared/Card";
 import Form, { type FormDataType } from "./shared/Form";
+import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
+import { ArrowRight } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const login = async (values: FormDataType) => {
     try {
       await HttpInterceptor.post("/auth/login", values);
@@ -18,48 +29,68 @@ const Login = () => {
   };
 
   return (
-     <div className="bg-gray-100 flex items-center justify-center h-screen">
-      <div className="lg:w-6/12 animate__animated animate__fadeIn">
-        <Card noPadding>
-          <div className="grid lg:grid-cols-2">
+    <div className="min-h-screen bg-background flex items-center justify-center relative">
+      <AuthBackdrop />
 
-            <div className="p-8 space-y-6">
-              <div>
-                <h1 className="text-xl font-bold text-black">
-                  Sign in an account
-                </h1>
-                <p className="text-gray-500">Start your first chat now</p>
+      <div className="w-full max-w-sm space-y-6 relative z-10">
+        <div className="flex justify-center">
+          <span className="font-bold text-lg tracking-tight">Besties</span>
+        </div>
+
+        <Card className="rounded-3xl shadow-sm border-border">
+          <CardHeader className="text-center space-y-1">
+            <CardTitle className="text-xl font-bold">Welcome back</CardTitle>
+            <CardDescription>Log in to get back to your chats</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Form className="space-y-4" onValue={login}>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  className="rounded-xl"
+                />
               </div>
 
-              <Form className="space-y-6" onValue={login}>
-                <Input name="email" placeholder="Email id" />
-                <Input type="password" name="password" placeholder="Password" />
-                <Button type="danger" icon="arrow-right-up-line">
-                  Sign in
-                </Button>
-              </Form>
-
-              <div className="flex gap-2">
-                <p>Don't have an account?</p>
-                <Link to="/signup" className="text-green-400 font-medium hover:underline">
-                  Sign up
-                </Link>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+                    Forgot password?
+                  </span>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Your password"
+                  className="rounded-xl"
+                />
               </div>
-            </div>
 
-            <div className="overflow-hidden h-125 bg-linear-to-t from-sky-500 to-indigo-500 rounded-r-xl flex items-center justify-center">
-              <img
-                src="/public/images/avt.jpeg"
-                alt="auth"
-                className="w-[70%] animate__animated animate__slideInUp animate__faster"
-              />
-            </div>
+              <Button type="submit" className="w-full rounded-full mt-2">
+                Log in
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Form>
 
-          </div>
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-foreground font-medium hover:underline"
+              >
+                Sign up free
+              </Link>
+            </p>
+          </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 };
 
 export default Login;
