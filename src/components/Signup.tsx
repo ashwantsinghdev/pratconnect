@@ -1,10 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
-import Button from "./shared/Button";
-import Card from "./shared/Card";
-import Input from "./shared/Input";
+import { Label } from "../components/shared/Label";
+import { Input } from "../components/shared/Input"
+import { Button } from "../components/shared/Button";
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../components/shared/Card";
 import Form, { type FormDataType } from "./shared/Form";
+import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
+import { ArrowRight } from "lucide-react";
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -16,44 +27,82 @@ const Signup = () => {
       CatchError(err);
     }
   };
-  return (
-    <div className="bg-gray-100 flex items-center justify-center h-screen">
-      <div className="w-6/12 animate__animated animate__fadeIn">
-        <Card noPadding>
-          <div className="grid grid-cols-2">
-            <div className="p-8 space-y-6">
-              <div>
-                <h1 className="text-xl font-bold  text-black">
-                  Add an account
-                </h1>
-                <p className="text-gray-500">Start your first chat now </p>
-              </div>
-              <Form className=" space-y-6" onValue={signup}>
-                <Input name="fullname" placeholder="Fullname" />
-                <Input name="email" placeholder="Email id" />
-                <Input name="mobile" placeholder="Mobile" />
-                <Input type="password" name="password" placeholder="Password" />
 
-                <Button type="danger" icon="arrow-right-up-line" />
-              </Form>
-              <div className="flex gap-2">
-                <p>Already have an account ?</p>
-                <Link
-                  to="/login"
-                  className="text-green-400 font-medium  hover:underline"
-                >
-                  Sign in
-                </Link>
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center relative">
+      <AuthBackdrop />
+
+      <div className="w-full max-w-sm space-y-6 relative z-10">
+        <div className="flex justify-center">
+          <span className="font-bold text-lg tracking-tight">Besties</span>
+        </div>
+
+        <Card className="rounded-3xl shadow-sm border-border">
+          <CardHeader className="text-center space-y-1">
+            <CardTitle className="text-xl font-bold">
+              Create an account
+            </CardTitle>
+            <CardDescription>Start your first chat now</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Form className="space-y-4" onValue={signup}>
+              <div className="space-y-2">
+                <Label htmlFor="fullname">Full name</Label>
+                <Input
+                  id="fullname"
+                  name="fullname"
+                  className="rounded-xl"
+                />
               </div>
-            </div>
-            <div className=" overflow-hidden h-125 bg-linear-to-t from-sky-500 to-indigo-500 rounded-r-xl  flex items-center justify-center">
-              <img
-                src="/public/images/avt.jpeg"
-                alt="auth"
-                className="w-full animate__animated animate__slideInUp animate__faster"
-              />
-            </div>
-          </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mobile">Mobile</Label>
+                <Input
+                  id="mobile"
+                  name="mobile"
+                  placeholder="9999999999"
+                  className="rounded-xl"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Create a password"
+                  className="rounded-xl"
+                />
+              </div>
+
+              <Button type="submit" className="w-full rounded-full mt-2">
+                Create account
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Form>
+
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="text-foreground font-medium hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </CardContent>
         </Card>
       </div>
     </div>

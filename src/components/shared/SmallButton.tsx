@@ -1,18 +1,18 @@
-import type{ FC } from "react";
+import type { FC } from "react";
 
 const SmallButtonModel = {
   primary:
-    "w-full bg-blue-500 hover:bg-blue-600 rounded font-medium text-white px-3 py-1 text-sm",
+    "w-full bg-primary hover:bg-primary/85 rounded-lg font-medium text-primary-foreground px-3 py-1 text-sm",
   secondary:
-    "w-full bg-indigo-500 hover:bg-indigo-600 rounded font-medium text-white px-3 py-1 text-sm",
+    "w-full bg-secondary hover:bg-secondary/70 rounded-lg font-medium text-secondary-foreground px-3 py-1 text-sm",
   danger:
-    "w-full bg-rose-500 hover:bg-rose-600 rounded font-medium text-white px-3 py-1 text-sm",
+    "w-full bg-destructive hover:bg-destructive/85 rounded-lg font-medium text-primary-foreground px-3 py-1 text-sm",
   warning:
-    " w-full bg-amber-500 hover:bg-amber-600 rounded font-medium text-white px-3 py-1 text-sm",
-  dark: "w-full bg-zinc-500 hover:bg-zinc-600 rounded font-medium text-white px-3 py-1 text-sm",
+    "w-full bg-accent hover:bg-accent/85 rounded-lg font-medium text-accent-foreground px-3 py-1 text-sm",
+  dark: "w-full bg-foreground hover:bg-foreground/85 rounded-lg font-medium text-background px-3 py-1 text-sm",
   success:
-    "w-full bg-green-400 hover:bg-green-500 rounded font-medium text-white px-3 py-1 text-sm",
-  info: " w-full bg-cyan-500 hover:bg-cyan-600 rounded font-medium text-white px-3 py-1 text-sm",
+    "w-full bg-emerald-500 hover:bg-emerald-600 rounded-lg font-medium text-white px-3 py-1 text-sm",
+  info: "w-full bg-sky-500 hover:bg-sky-600 rounded-lg font-medium text-white px-3 py-1 text-sm",
 };
 
 interface SmallButtonInterface {
@@ -41,7 +41,7 @@ const SmallButton: FC<SmallButtonInterface> = ({
 }) => {
   if (loading)
     return (
-      <button disabled className="text-gray-400">
+      <button disabled className="text-muted-foreground">
         <i className="fa fa-spinner fa-spin mr-2"></i>
         Processing...
       </button>

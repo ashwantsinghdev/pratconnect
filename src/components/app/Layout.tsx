@@ -6,7 +6,6 @@ import {
   useParams,
 } from "react-router-dom";
 import Avatar from "../shared/Avatar";
-import Card from "../shared/Card";
 import { useContext, useEffect, useRef, useState } from "react";
 import Dashboard from "./Dashboard";
 import Context from "../../Context";
@@ -24,6 +23,7 @@ import FriendsOnline from "./friend/FriendsOnline";
 import socket from "../../lib/Socket";
 import type { AudioSrcType, onOfferInterface } from "./Video";
 import { notification } from "antd";
+import { Card } from "../shared/Card";
 
 const EightMinutesInMs = 8 * 60 * 1000;
 
@@ -164,10 +164,8 @@ const Layout = () => {
   ];
 
   const sidebarStyle = {
-    backgroundImage:
-      "radial-gradient( circle farthest-corner at 8.3% 21.6%, rgba(252,92,125,1) 13.1%, rgba(106,130,251,1) 90% )",
+    backgroundColor: "var(--sidebar)",
   };
-
   const getPathname = (path: string) => {
     const firstPath = path.split("/").pop();
     const finalPath = firstPath?.split("-").join(" ");
@@ -222,7 +220,7 @@ const Layout = () => {
       </nav>
 
       <aside
-        className="bg-white fixed top-0 left-0 h-full lg:p-8 overflow-auto z-[20000]"
+        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-[20000]"
         style={{ width: leftAsideSize, transition: "0.2s" }}
       >
         <div
@@ -231,7 +229,7 @@ const Layout = () => {
         >
           <div className="flex justify-center">
             {leftAsideSize === collapseSize ? (
-              <i className="ri-user-fill text-xl text-white animate__animated animate__fadeIn"></i>
+              <i className="ri-user-fill text-xl text-sidebar-foreground animate__animated animate__fadeIn"></i>
             ) : (
               <div className="animate__animated animate__fadeIn capitalize">
                 {session && (
@@ -239,8 +237,8 @@ const Layout = () => {
                     title={session.fullname}
                     subtitle={session.email}
                     image={session.image || "/images/images.jpeg"}
-                    titleColor="white"
-                    subtitleColor="#dddd"
+                    titleColor="var(--sidebar-foreground)"
+                    subtitleColor="var(--muted-foreground)"
                     onClick={uploadImage}
                   />
                 )}
@@ -253,7 +251,7 @@ const Layout = () => {
               <Link
                 key={index}
                 to={item.href}
-                className="flex items-center gap-4 text-gray-300 py-3 hover:text-white"
+                className="flex items-center gap-4 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
               >
                 <i className={item.icon} title={item.label}></i>
                 <label
@@ -266,7 +264,7 @@ const Layout = () => {
 
             <button
               onClick={logout}
-              className="flex items-center gap-2 text-gray-300 py-3 hover:text-white"
+              className="flex items-center gap-2 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors w-full"
             >
               <i className="ri-logout-circle-r-line text-xl" title="logout"></i>
               <label className={leftAsideSize === collapseSize ? "hidden" : ""}>
@@ -290,7 +288,7 @@ const Layout = () => {
             title={
               <div className="flex gap-4 items-center">
                 <button
-                  className="lg:block hidden bg-gray-100 w-10 h-10 rounded-full hover:bg-slate-200"
+                  className="lg:block hidden bg-muted w-10 h-10 rounded-full hover:bg-muted/70"
                   onClick={() => setIsCollapsed((prev) => !prev)}
                 >
                   <i className="ri-arrow-left-line"></i>
@@ -313,7 +311,7 @@ const Layout = () => {
           </Card>
         </div>
 
-        <aside className="bg-white lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
+        <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
           <FriendsRequest />
           <FriendsSuggestion />
           <FriendsOnline />

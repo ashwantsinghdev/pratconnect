@@ -2,31 +2,56 @@
 
 @layer base {
   :root {
-    --background: 40 33% 93%;
-    /* #F3EEE4 warm cream page bg */
-    --foreground: 220 20% 10%;
-    /* near-black text */
+    --background: hsl(41 30% 85%);
+    /* pixel-measured from screenshots, avg #e5decf */
+    --foreground: hsl(220 19% 12%);
+    /* pixel-measured, #191d25 */
 
-    --card: 42 40% 97%;
-    /* #FAF7F0 card background */
-    --card-foreground: 220 20% 10%;
+    --card: hsl(45 25% 87%);
+    /* pixel-measured, #e7e3d7 */
+    --card-foreground: hsl(220 19% 12%);
 
-    --primary: 220 20% 10%;
-    /* #14151A near-black navy buttons */
-    --primary-foreground: 40 33% 96%;
-    /* cream text on dark buttons */
+    --popover: hsl(45 25% 89%);
+    --popover-foreground: hsl(220 19% 12%);
 
-    --muted: 40 15% 85%;
-    --muted-foreground: 35 8% 52%;
-    /* #8A8578 warm gray labels */
+    --primary: hsl(220 19% 12%);
+    /* pixel-measured, #191d25 */
+    --primary-foreground: hsl(45 25% 96%);
 
-    --border: 40 20% 85%;
-    /* #E5DFD1 soft input borders */
-    --input: 40 20% 85%;
-    --ring: 220 20% 10%;
+    --secondary: hsl(41 20% 82%);
+    --secondary-foreground: hsl(220 19% 12%);
 
-    --radius: 1rem;
-    /* base 16px radius, cards/buttons scale from this */
+    --muted: hsl(40 18% 80%);
+    --muted-foreground: hsl(220 8% 40%);
+
+    --accent: hsl(20 60% 42%);
+    /* pixel-measured avg of "flow." + eyebrow labels, #aa562b */
+    --accent-foreground: hsl(45 25% 96%);
+
+    --destructive: hsl(0 65% 48%);
+
+    --border: hsl(38 18% 80%);
+    /* soft warm border on inputs/cards */
+    --input: hsl(38 18% 80%);
+    --ring: hsl(222 22% 12%);
+
+    --chart-1: hsl(20 60% 45%);
+    --chart-2: hsl(150 30% 40%);
+    --chart-3: hsl(222 22% 30%);
+    --chart-4: hsl(38 40% 55%);
+    --chart-5: hsl(222 8% 40%);
+
+    --sidebar: hsl(40 30% 92%);
+    --sidebar-foreground: hsl(222 22% 12%);
+    --sidebar-primary: hsl(222 22% 12%);
+    --sidebar-primary-foreground: hsl(40 30% 96%);
+    --sidebar-accent: hsl(40 20% 85%);
+    --sidebar-accent-foreground: hsl(222 22% 12%);
+    --sidebar-border: hsl(38 18% 80%);
+    --sidebar-ring: hsl(222 22% 12%);
+
+    --radius: 1.25rem;
+    /* rounder cards/buttons to match reference site */
   }
 }
 
@@ -98,41 +123,6 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.875rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -157,23 +147,28 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+--sidebar: hsl(215 20% 90%);
+  /* pale blue-gray sidebar surface */
+  --sidebar-foreground: hsl(220 19% 15%);
+  --sidebar-primary: hsl(220 19% 15%);
+  --sidebar-primary-foreground: hsl(215 20% 96%);
+  --sidebar-accent: hsl(215 22% 84%);
+  /* hover pill background */
+  --sidebar-accent-foreground: hsl(20 60% 42%);
+  /* rust-orange hover text */
+  --sidebar-border: hsl(215 18% 78%);
+  --sidebar-ring: hsl(220 19% 15%);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
