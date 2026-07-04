@@ -220,7 +220,7 @@ const Layout = () => {
       </nav>
 
       <aside
-        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-[20000]"
+        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-20000"
         style={{ width: leftAsideSize, transition: "0.2s" }}
       >
         <div
