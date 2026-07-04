@@ -14,16 +14,16 @@ import { v4 as uuid } from "uuid";
 import useSWR, { mutate } from "swr";
 import Fetcher from "../../lib/Fetcher";
 import CatchError from "../../lib/CatchError";
-import FriendsSuggestion from "./friend/FriendsSuggestion";
-import FriendsRequest from "./friend/FriendsRequest";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../shared/Logo";
 import IconButton from "../shared/IconButton";
-import FriendsOnline from "./friend/FriendsOnline";
+
 import socket from "../../lib/Socket";
 import type { AudioSrcType, onOfferInterface } from "./Video";
 import { notification } from "antd";
-import { Card } from "../shared/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "../shared/Card";import FriendsSuggestion from "./friend/FriendSuggestion";
+import FriendRequest from "./friend/FriendsRequest";
+import FriendsOnline from "./friend/FriendsOnline";
 
 const EightMinutesInMs = 8 * 60 * 1000;
 
@@ -158,9 +158,9 @@ const Layout = () => {
   const { session, setSession } = useContext(Context);
 
   const menus = [
-    { icon: "ri-home-9-line", href: "/app/dashboard", label: "dashboard" },
-    { icon: "ri-chat-smile-3-line", href: "/app/my-posts", label: "my posts" },
-    { icon: "ri-group-line", href: "/app/friends", label: "friends" },
+    { icon: "ri-home-9-line", href: "/app/dashboard", label: "Dashboard" },
+    { icon: "ri-chat-smile-3-line", href: "/app/my-posts", label: "My posts" },
+    { icon: "ri-group-line", href: "/app/friends", label: "Friends" },
   ];
 
   const sidebarStyle = {
@@ -200,21 +200,21 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen">
-      <nav className="lg:hidden flex justify-between items-center sticky top-0 z-20000 w-full p-4 bg-linear-to-br from-indigo-900 via-purple-800 to-blue-900">
+      <nav className="lg:hidden flex justify-between items-center sticky top-0 z-20000 w-full p-4 bg-sidebar border-b border-sidebar-border">
         <Logo />
         <div className="flex gap-4">
           <IconButton
             onClick={logout}
             icon="logout-circle-line"
-            type="success"
+            type="secondary"
           />
           <Link to="/app/friends">
-            <IconButton icon="chat-ai-line" type="danger" />
+            <IconButton icon="chat-ai-line" type="secondary" />
           </Link>
           <IconButton
             onClick={() => setIsCollapsed((prev) => !prev)}
             icon="menu-3-line"
-            type="warning"
+            type="secondary"
           />
         </div>
       </nav>
@@ -251,7 +251,7 @@ const Layout = () => {
               <Link
                 key={index}
                 to={item.href}
-                className="flex items-center gap-4 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                className="flex items-center gap-4 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors "
               >
                 <i className={item.icon} title={item.label}></i>
                 <label
@@ -283,36 +283,38 @@ const Layout = () => {
           transition: "0.2s",
         }}
       >
-        <div className="flex-1">
-          <Card
-            title={
-              <div className="flex gap-4 items-center">
-                <button
-                  className="lg:block hidden bg-muted w-10 h-10 rounded-full hover:bg-muted/70"
-                  onClick={() => setIsCollapsed((prev) => !prev)}
-                >
-                  <i className="ri-arrow-left-line"></i>
-                </button>
-                <h1>
-                  {paramsArray.length === 0 ? (
-                    getPathname(pathname)
-                  ) : (
-                    <ActiveSessionUis
-                      liveActiveSession={liveActiveSession}
-                      navigate={navigate}
-                    />
-                  )}
-                </h1>
-              </div>
-            }
-            divider
-          >
-            {pathname === "/app" ? <Dashboard /> : <Outlet />}
+        <div className="flex-1 capitalize">
+          <Card>
+            <CardHeader className="border-b border-border">
+              <CardTitle>
+                <div className="flex gap-4 items-center">
+                  <button
+                    className="lg:block hidden bg-muted w-10 h-10 rounded-full hover:bg-muted/70"
+                    onClick={() => setIsCollapsed((prev) => !prev)}
+                  >
+                    <i className="ri-arrow-left-line"></i>
+                  </button>
+                  <h1>
+                    {paramsArray.length === 0 ? (
+                      getPathname(pathname)
+                    ) : (
+                      <ActiveSessionUis
+                        liveActiveSession={liveActiveSession}
+                        navigate={navigate}
+                      />
+                    )}
+                  </h1>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {pathname === "/app" ? <Dashboard /> : <Outlet />}
+            </CardContent>
           </Card>
         </div>
 
         <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
-          <FriendsRequest />
+          <FriendRequest />
           <FriendsSuggestion />
           <FriendsOnline />
         </aside>

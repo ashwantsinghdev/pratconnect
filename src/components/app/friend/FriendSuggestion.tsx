@@ -6,8 +6,13 @@ import Fetcher from "../../../lib/Fetcher";
 import { Empty, Skeleton } from "antd";
 import CatchError from "../../../lib/CatchError";
 import HttpInterceptor from "../../../lib/HttpInterceptor";
-import {toast}from "react-toastify"
-import { Card } from "@/components/shared/Card";
+import { toast } from "react-toastify";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/shared/Card";
 
 const FriendsSuggestion = () => {
   const { data, error, isLoading } = useSWR("/friend/suggestion", Fetcher);
@@ -21,34 +26,32 @@ const FriendsSuggestion = () => {
       mutate("/friend/suggestion");
       mutate("/friend");
 
-      toast.success("Friend request sent", { position: 'top-center' })
-
+      toast.success("Friend request sent", { position: "top-center" });
     } catch (err) {
-      CatchError(err)
-
+      CatchError(err);
     }
-  }
+  };
 
-
-return (
-    <>
-    <Card title="Suggestion"/>
-
-      <div>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Suggestion</CardTitle>
+      </CardHeader>
+      <CardContent>
         <Swiper slidesPerView={2} spaceBetween={30} className="mySwiper">
           {data.map((item: any, index: number) => (
             <SwiperSlide key={index}>
-              <div className="flex flex-col items-center gap-2 border border-gray-100 p-3 rounded-lg">
+              <div className="flex flex-col items-center gap-2 border border-border bg-card p-3 rounded-xl">
                 <img
                   src={item.image || "/public/images/avt.jpeg"}
                   className="w-20 h-20 rounded-full object-cover"
                   alt=""
                 />
-                <h1 className="text-base font-medium text-black">
+                <h1 className="text-base font-medium text-foreground">
                   {item.fullname}
                 </h1>
                 <SmallButton
-                  type="success"
+                  type="primary"
                   icon="user-add-line"
                   onClick={() => sendFriendRequest(item._id)}
                 >
@@ -58,8 +61,8 @@ return (
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 
