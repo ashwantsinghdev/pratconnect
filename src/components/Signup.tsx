@@ -15,7 +15,7 @@ import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
 import { ArrowRight } from "lucide-react";
-
+import Logo from "./shared/Logo";
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ const Signup = () => {
 
       <div className="w-full max-w-sm space-y-6 relative z-10">
         <div className="flex justify-center">
-          <span className="font-bold text-lg tracking-tight">Besties</span>
+          <Logo />
         </div>
 
         <Card className="rounded-3xl shadow-sm border-border">
@@ -49,11 +49,7 @@ const Signup = () => {
             <Form className="space-y-4" onValue={signup}>
               <div className="space-y-2">
                 <Label htmlFor="fullname">Full name</Label>
-                <Input
-                  id="fullname"
-                  name="fullname"
-                  className="rounded-xl"
-                />
+                <Input id="fullname" name="fullname" className="rounded-xl" />
               </div>
 
               <div className="space-y-2">
@@ -87,9 +83,12 @@ const Signup = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full rounded-full mt-2">
+              <Button
+                type="submit"
+                className="w-full rounded-full mt-2 h-12 text-base font-semibold bg-gradient-to-r from-accent to-amber-400 text-white hover:opacity-90"
+              >
                 Create account
-                <ArrowRight className="ml-1 h-4 w-4" />
+                <ArrowRight className="ml-1 h-5 w-5" />
               </Button>
             </Form>
 

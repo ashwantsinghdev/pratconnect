@@ -42,7 +42,7 @@ const FriendsList: FC<FriendsListInterface> = ({ gap = 8, columns = 3 }) => {
       CatchError(err);
     }
   };
-  if (isLoading) return <Skeleton active />;
+  if (isLoading) return <Skeleton active  />;
 
   if (error) return <Empty />;
 

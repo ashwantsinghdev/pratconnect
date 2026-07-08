@@ -15,7 +15,7 @@ import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
 import { ArrowRight } from "lucide-react";
-
+import Logo from "./shared/Logo";
 const Login = () => {
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ const Login = () => {
 
       <div className="w-full max-w-sm space-y-6 relative z-10">
         <div className="flex justify-center">
-          <span className="font-bold text-lg tracking-tight">Besties</span>
+          <Logo />
         </div>
 
         <Card className="rounded-3xl shadow-sm border-border">
@@ -71,9 +71,13 @@ const Login = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full rounded-full mt-2">
+              <Button
+                type="submit"
+                variant="gradient"
+                className="w-full rounded-full mt-2 h-12 text-base font-semibold"
+              >
                 Log in
-                <ArrowRight className="ml-1 h-4 w-4" />
+                <ArrowRight className="ml-1 h-5 w-5" />
               </Button>
             </Form>
 

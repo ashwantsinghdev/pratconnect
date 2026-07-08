@@ -36,10 +36,18 @@ const FriendRequest = () => {
         <CardTitle>Requests</CardTitle>
       </CardHeader>
       <CardContent>
-        <Swiper slidesPerView={2} spaceBetween={30} className="mySwiper">
+        <Swiper
+          slidesPerView={1.3}
+          spaceBetween={16}
+          breakpoints={{
+            480: { slidesPerView: 2, spaceBetween: 20 },
+            1024: { slidesPerView: 2, spaceBetween: 30 },
+          }}
+          className="mySwiper"
+        >
           {data.map((item: any, index: number) => (
             <SwiperSlide key={index}>
-              <div className="flex flex-col items-center gap-2 border border-border bg-card p-3 rounded-xl">
+              <div className="flex flex-col items-center gap-2 border border-border bg-card p-3 rounded-xl capitalize">
                 <img
                   src="/public/images/avt.jpeg"
                   className="w-20 h-20 rounded-full object-cover"

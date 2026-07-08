@@ -17,11 +17,13 @@ import CatchError from "../../lib/CatchError";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../shared/Logo";
 import IconButton from "../shared/IconButton";
+import { cn } from "@/lib/utils";
 
 import socket from "../../lib/Socket";
 import type { AudioSrcType, onOfferInterface } from "./Video";
 import { notification } from "antd";
-import { Card, CardHeader, CardTitle, CardContent } from "../shared/Card";import FriendsSuggestion from "./friend/FriendSuggestion";
+import { Card, CardHeader, CardTitle, CardContent } from "../shared/Card";
+import FriendsSuggestion from "./friend/FriendSuggestion";
 import FriendRequest from "./friend/FriendsRequest";
 import FriendsOnline from "./friend/FriendsOnline";
 
@@ -60,8 +62,14 @@ const Layout = () => {
   const isMobile = useMediaQuery({ query: "max-width:1224px" });
   const [isCollapsed, setIsCollapsed] = useState(false);
   const collapseSize = isMobile ? 0 : 140;
-  const expandedSize = isMobile ? 0 : 350;
-  const leftAsideSize = isCollapsed ? collapseSize : expandedSize;
+  const expandedSize = isMobile ? 280 : 350;
+  const leftAsideSize = isMobile
+    ? isCollapsed
+      ? expandedSize
+      : 0
+    : isCollapsed
+      ? collapseSize
+      : expandedSize;
   const { liveActiveSession, setLiveActiveSession, setSdp } =
     useContext(Context);
   const { pathname } = useLocation();
@@ -158,9 +166,9 @@ const Layout = () => {
   const { session, setSession } = useContext(Context);
 
   const menus = [
-    { icon: "ri-home-9-line", href: "/app/dashboard", label: "Dashboard" },
-    { icon: "ri-chat-smile-3-line", href: "/app/my-posts", label: "My posts" },
-    { icon: "ri-group-line", href: "/app/friends", label: "Friends" },
+    { icon: "ri-home-9-line", href: "/app/dashboard", label: "dashboard" },
+    { icon: "ri-chat-smile-3-line", href: "/app/my-posts", label: "my posts" },
+    { icon: "ri-group-line", href: "/app/friends", label: "friends" },
   ];
 
   const sidebarStyle = {
@@ -200,27 +208,34 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen">
-      <nav className="lg:hidden flex justify-between items-center sticky top-0 z-20000 w-full p-4 bg-sidebar border-b border-sidebar-border">
+      <nav className="lg:hidden flex justify-between items-center sticky top-0 z-[20000] w-full p-4 bg-linear-to-br from-indigo-900 via-purple-800 to-blue-900">
         <Logo />
         <div className="flex gap-4">
           <IconButton
             onClick={logout}
             icon="logout-circle-line"
-            type="secondary"
+            type="success"
           />
           <Link to="/app/friends">
-            <IconButton icon="chat-ai-line" type="secondary" />
+            <IconButton icon="chat-ai-line" type="danger" />
           </Link>
           <IconButton
             onClick={() => setIsCollapsed((prev) => !prev)}
             icon="menu-3-line"
-            type="secondary"
+            type="warning"
           />
         </div>
       </nav>
 
+      {isMobile && isCollapsed && (
+        <div
+          className="fixed inset-0 bg-foreground/40 z-[10000]"
+          onClick={() => setIsCollapsed(false)}
+        />
+      )}
+
       <aside
-        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-20000"
+        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-[20000]"
         style={{ width: leftAsideSize, transition: "0.2s" }}
       >
         <div
@@ -247,24 +262,33 @@ const Layout = () => {
           </div>
 
           <div>
-            {menus.map((item, index) => (
-              <Link
-                key={index}
-                to={item.href}
-                className="flex items-center gap-4 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors "
-              >
-                <i className={item.icon} title={item.label}></i>
-                <label
-                  className={`capitalize ${leftAsideSize === collapseSize ? "hidden" : ""}`}
+            {menus.map((item, index) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={index}
+                  to={item.href}
+                  onClick={() => isMobile && setIsCollapsed(false)}
+                  className={cn(
+                    "flex items-center gap-4 py-2.5 px-3 rounded-lg transition-colors",
+                    isActive
+                      ? "bg-accent/10 text-accent font-medium"
+                      : "text-sidebar-foreground/60 hover:bg-accent/5 hover:text-accent",
+                  )}
                 >
-                  {item.label}
-                </label>
-              </Link>
-            ))}
+                  <i className={item.icon} title={item.label}></i>
+                  <label
+                    className={`capitalize ${leftAsideSize === collapseSize ? "hidden" : ""}`}
+                  >
+                    {item.label}
+                  </label>
+                </Link>
+              );
+            })}
 
             <button
               onClick={logout}
-              className="flex items-center gap-2 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors w-full"
+              className="flex items-center gap-2 text-sidebar-foreground/60 py-2.5 px-3 rounded-lg hover:bg-accent/5 hover:text-accent transition-colors w-full"
             >
               <i className="ri-logout-circle-r-line text-xl" title="logout"></i>
               <label className={leftAsideSize === collapseSize ? "hidden" : ""}>

@@ -3,19 +3,15 @@
 @layer base {
   :root {
     --background: hsl(41 30% 85%);
-    /* pixel-measured from screenshots, avg #e5decf */
     --foreground: hsl(220 19% 12%);
-    /* pixel-measured, #191d25 */
 
     --card: hsl(45 25% 87%);
-    /* pixel-measured, #e7e3d7 */
     --card-foreground: hsl(220 19% 12%);
 
     --popover: hsl(45 25% 89%);
     --popover-foreground: hsl(220 19% 12%);
 
     --primary: hsl(220 19% 12%);
-    /* pixel-measured, #191d25 */
     --primary-foreground: hsl(45 25% 96%);
 
     --secondary: hsl(41 20% 82%);
@@ -31,7 +27,6 @@
     --destructive: hsl(0 65% 48%);
 
     --border: hsl(38 18% 80%);
-    /* soft warm border on inputs/cards */
     --input: hsl(38 18% 80%);
     --ring: hsl(222 22% 12%);
 
@@ -51,7 +46,6 @@
     --sidebar-ring: hsl(222 22% 12%);
 
     --radius: 1.25rem;
-    /* rounder cards/buttons to match reference site */
   }
 }
 
@@ -167,7 +161,60 @@
     @apply bg-background text-foreground;
   }
 
-  html {
+    html {
     @apply font-sans;
   }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  a,
+  label[for],
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"]:disabled {
+    cursor: not-allowed;
+  }
+}
+
+
+/* CKEditor ships its own hardcoded white theme and doesn't read Tailwind
+   utility classes, so it's themed here directly with the same tokens. */
+.ck.ck-toolbar {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  border-radius: var(--radius) var(--radius) 0 0 !important;
+}
+
+.ck.ck-editor__main>.ck-editor__editable {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+  border-radius: 0 0 var(--radius) var(--radius) !important;
+  min-height: 140px;
+}
+
+.ck.ck-editor__editable_inline:not(.ck-comment__input *):focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent) !important;
+}
+
+.ck.ck-button:not(.ck-disabled):hover,
+.ck.ck-button:not(.ck-disabled):focus,
+a.ck.ck-button:not(.ck-disabled):hover {
+  background: color-mix(in oklch, var(--accent), transparent 90%) !important;
+  color: var(--accent) !important;
+}
+
+.ck.ck-button.ck-on,
+a.ck.ck-button.ck-on {
+  background: color-mix(in oklch, var(--accent), transparent 85%) !important;
+  color: var(--accent) !important;
+}
+
+.ck.ck-toolbar .ck-toolbar__separator {
+  background: var(--border) !important;
 }

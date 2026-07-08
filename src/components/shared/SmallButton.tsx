@@ -13,6 +13,8 @@ const SmallButtonModel = {
   success:
     "w-full bg-emerald-500 hover:bg-emerald-600 rounded-lg font-medium text-white px-3 py-1 text-sm",
   info: "w-full bg-sky-500 hover:bg-sky-600 rounded-lg font-medium text-white px-3 py-1 text-sm",
+  gradient:
+    "w-full bg-gradient-to-r from-accent to-amber-400 hover:opacity-90 rounded-lg font-medium text-white px-3 py-1 text-sm",
 };
 
 interface SmallButtonInterface {
@@ -24,7 +26,8 @@ interface SmallButtonInterface {
     | "warning"
     | "dark"
     | "success"
-    | "info";
+    | "info"
+    | "gradient";
   onClick?: () => void;
   icon?: string;
   key?: string | number;
