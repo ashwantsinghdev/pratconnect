@@ -6,18 +6,25 @@ import {
 } from "@/components/shared/Card";
 import Context from "@/Context";
 import socket from "@/lib/Socket";
+import Fetcher from "@/lib/Fetcher";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useSWR from "swr";
 
 const FriendsOnline = () => {
   const [onlineUsers, setOnlineUser] = useState([]);
   const { session, setLiveActiveSession } = useContext(Context);
   const navigate = useNavigate();
 
+  
+  const { data: friends } = useSWR("/friend", Fetcher);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onlineHandler = (users: any) => {
     setOnlineUser(users);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const generateActiveSession = (url: string, user: any) => {
     setLiveActiveSession(user);
     navigate(url);
@@ -32,6 +39,10 @@ const FriendsOnline = () => {
     };
   }, []);
 
+  const isFriend = (userId: string) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (friends ?? []).some((item: any) => item.friend._id === userId);
+
   return (
     <Card>
       <CardHeader>
@@ -41,12 +52,16 @@ const FriendsOnline = () => {
         <div className="space-y-6">
           {session &&
             onlineUsers
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .filter((item: any) => item.id !== session.id)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((item: any) => isFriend(item.id))
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .map((item: any, index) => (
                 <div key={index} className="flex">
                   <div className="flex gap-3">
                     <img
-                      src="/public/images/avt.jpeg"
+                      src={item.image || "/public/images/avt.jpeg"}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>

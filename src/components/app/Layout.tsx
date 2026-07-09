@@ -23,6 +23,7 @@ import socket from "../../lib/Socket";
 import type { AudioSrcType, onOfferInterface } from "./Video";
 import { notification } from "antd";
 import { Card, CardHeader, CardTitle, CardContent } from "../shared/Card";
+
 import FriendsSuggestion from "./friend/FriendSuggestion";
 import FriendRequest from "./friend/FriendsRequest";
 import FriendsOnline from "./friend/FriendsOnline";
@@ -32,9 +33,13 @@ const EightMinutesInMs = 8 * 60 * 1000;
 const ActiveSessionUis = ({
   liveActiveSession,
   navigate,
+  pathname,
+  friendId,
 }: {
   liveActiveSession: any;
   navigate: ReturnType<typeof useNavigate>;
+  pathname: string;
+  friendId?: string;
 }) => {
   useEffect(() => {
     if (!liveActiveSession) {
@@ -44,20 +49,43 @@ const ActiveSessionUis = ({
 
   if (!liveActiveSession) return null;
 
+   const showCallIcons = pathname.startsWith("/app/chat/");
+
   return (
-    <div className="flex gap-3">
-      <img
-        src={liveActiveSession.image || "/images/avt.avif"}
-        className="w-12 h-12 rounded-full object-cover"
-      />
-      <div className="flex flex-col">
-        <h1 className="font-medium capitalize">{liveActiveSession.fullname}</h1>
-        <label className="text-xs text-green-400">Online</label>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex gap-3">
+        <img
+          src={liveActiveSession.image || "/images/avt.avif"}
+          className="w-12 h-12 rounded-full object-cover"
+        />
+        <div className="flex flex-col justify-center">
+          <h1 className="font-medium capitalize">
+            {liveActiveSession.fullname}
+          </h1>
+          <label className="text-xs text-chart-2">Online</label>
+        </div>
       </div>
+      {showCallIcons && friendId && (
+        <div className="flex gap-2">
+          <button
+            aria-label="Start audio call"
+            onClick={() => navigate(`/app/audio-chat/${friendId}`)}
+            className="w-9 h-9 rounded-full bg-muted hover:bg-accent hover:text-white text-foreground flex items-center justify-center transition-colors"
+          >
+            <i className="ri-phone-line"></i>
+          </button>
+          <button
+            aria-label="Start video call"
+            onClick={() => navigate(`/app/video-chat/${friendId}`)}
+            className="w-9 h-9 rounded-full bg-muted hover:bg-accent hover:text-white text-foreground flex items-center justify-center transition-colors"
+          >
+            <i className="ri-vidicon-line"></i>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
-
 const Layout = () => {
   const isMobile = useMediaQuery({ query: "max-width:1224px" });
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -110,7 +138,6 @@ const Layout = () => {
     refreshInterval: EightMinutesInMs,
     shouldRetryOnError: false,
   });
-
   const onOffer = (payload: onOfferInterface) => {
     setSdp(payload);
     setLiveActiveSession(payload.from);
@@ -120,12 +147,14 @@ const Layout = () => {
       return navigate(`/app/audio-chat/${payload.from.socketId}`);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const startChat = (payload: any) => {
     notify.destroy();
     setLiveActiveSession(payload.from);
     navigate(`/app/chat/${payload.from.id}`);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMessage = (payload: any) => {
     if (location.href.includes("/app/chat")) return;
     platAudio("/public/sound/chat.mp3");
@@ -318,13 +347,20 @@ const Layout = () => {
                   >
                     <i className="ri-arrow-left-line"></i>
                   </button>
-                  <h1>
-                    {paramsArray.length === 0 ? (
-                      getPathname(pathname)
+                  <h1 className="flex-1">
+                    {paramsArray.length === 0 ||
+                    pathname.startsWith("/app/friends") ? (
+                      getPathname(
+                        pathname.startsWith("/app/friends")
+                          ? "/app/friends"
+                          : pathname,
+                      )
                     ) : (
                       <ActiveSessionUis
                         liveActiveSession={liveActiveSession}
                         navigate={navigate}
+                        pathname={pathname}
+                        friendId={params.id}
                       />
                     )}
                   </h1>
@@ -337,11 +373,14 @@ const Layout = () => {
           </Card>
         </div>
 
-        <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
-          <FriendRequest />
-          <FriendsSuggestion />
-          <FriendsOnline />
-        </aside>
+        {!pathname.startsWith("/app/friends") &&
+          !pathname.startsWith("/app/chat/") && (
+            <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
+              <FriendRequest />
+              <FriendsSuggestion />
+              <FriendsOnline />
+            </aside>
+          )}
 
         {notifyUi}
       </section>

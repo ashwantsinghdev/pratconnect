@@ -11,8 +11,8 @@ import Chat from "./components/app/Chat";
 import NotFound from "./components/NotFound";
 import AuthGuard from "./guards/AuthGuard";
 import RedirectGuard from "./guards/RedirectGuard";
-import FriendsList from "./components/app/friend/FriendsList";
-import Context from "./Context";
+import FriendsLayout from "./components/app/friend/FriendsLayout";
+import FriendsEmpty from "./components/app/friend/FriendsEmpty";import Context from "./Context";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "animate.css";
@@ -47,7 +47,10 @@ const App = () => {
             <Route path="/app" element={<Layout />}>
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="my-posts" element={<Posts />} />
-              <Route path="friends" element={<FriendsList />} />
+              <Route path="friends" element={<FriendsLayout />}>
+                <Route index element={<FriendsEmpty />} />
+                <Route path=":id" element={<Chat />} />
+              </Route>
               <Route path="video-chat/:id" element={<Video />} />
               <Route path="audio-chat/:id" element={<Audio />} />
               <Route path="chat/:id" element={<Chat />} />

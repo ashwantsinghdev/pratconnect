@@ -92,13 +92,13 @@ const Posts = () => {
             {fileData && fileData.file.type.startsWith("image/") && (
               <img
                 src={fileData.url}
-                className="rounded-lg object-cover w-full max-h-[500px]"
+                className="rounded-lg object-cover w-full max-h-125"
               />
             )}
             {fileData && fileData.file.type.startsWith("video/") && (
               <video
                 src={fileData.url}
-                className="rounded-lg object-cover w-full max-h-[500px]"
+                className="rounded-lg object-cover w-full max-h-125"
                 controls
               />
             )}
@@ -134,19 +134,20 @@ const Posts = () => {
       {isLoading && <Skeleton active />}
 
       {data &&
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data.map((item: any) => (
           <Card key={item._id} className="mt-8">
             <CardContent className="space-y-3">
               {item.attachment && item.type.startsWith("image/") && (
                 <img
                   src={`${env.VITE_S3_URL}/${item.attachment}`}
-                  className="rounded-lg object-cover w-full max-h-[500px]"
+                  className="rounded-lg object-cover w-full max-h-125"
                 />
               )}
               {item.attachment && item.type.startsWith("video/") && (
                 <video
                   src={`${env.VITE_S3_URL}/${item.attachment}`}
-                  className="rounded-lg object-cover w-full max-h-[500px]"
+                  className="rounded-lg object-cover w-full max-h-125"
                   controls
                 />
               )}
