@@ -249,7 +249,7 @@ const Layout = () => {
       if (!input.files) return;
       const file = input.files[0];
       const path = `profile-pictures/${uuid()}.png`;
-      const payload = { path, type: file.type, status: "public" };
+      const payload = { path, type: file.type, status: "public-read" };
       try {
         const options = { headers: { "Content-Type": file.type } };
         const { data } = await HttpInterceptor.post("storage/upload", payload);
