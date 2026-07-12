@@ -27,7 +27,7 @@ import {
   MessageAvatar,
   MessageContent,
   MessageFooter,
-} from "@/components/shared/Message";
+} from "@/components/shared/Message"; 
 import {
   Attachment,
   AttachmentAction,
