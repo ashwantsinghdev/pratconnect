@@ -9,9 +9,9 @@ import {
 } from "react";
 import { Button } from "../shared/Button";
 import Form from "../shared/Form";
-import { Input } from "../shared/Input";
+import { Input } from "../shared/input";
 import Context from "../../Context";
-import { useParams, } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useSWR from "swr";
 import Fetcher from "../../lib/Fetcher";
 import CatchError from "../../lib/CatchError";
@@ -27,7 +27,7 @@ import {
   MessageAvatar,
   MessageContent,
   MessageFooter,
-} from "@/components/shared/Message"; 
+} from "@/components/shared/message";
 import {
   Attachment,
   AttachmentAction,
@@ -36,8 +36,8 @@ import {
   AttachmentDescription,
   AttachmentMedia,
   AttachmentTitle,
-} from "@/components/shared/Attachment";
-import { Avatar,AvatarFallback,AvatarImage, } from "../shared/Avatar";
+} from "@/components/shared/attachment";
+import { Avatar, AvatarFallback, AvatarImage } from "../shared/Avatar";
 interface MessageReceivedInterface {
   from: string;
   message: string;
@@ -199,13 +199,13 @@ const Chat = () => {
         },
       };
 
-     const localMetaData = {
-       file: {
-         path: url,
-         key: path,
-         type: file.type,
-       },
-     };
+      const localMetaData = {
+        file: {
+          path: url,
+          key: path,
+          type: file.type,
+        },
+      };
       const attachmentPayload = {
         from: session,
         to: id,

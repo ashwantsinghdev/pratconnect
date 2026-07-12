@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/shared/Button";
 import { Label } from "../components/shared/Label";
-import { Input } from "./shared/Input";
+import { Input } from "./shared/input";
 
 import {
   Card,
@@ -23,7 +23,7 @@ const Login = () => {
   const login = async (values: FormDataType) => {
     try {
       await HttpInterceptor.post("/auth/login", values);
-      toast.success("Logged in successfully!",{position:"bottom-right"});
+      toast.success("Logged in successfully!", { position: "bottom-right" });
       navigate("/app");
     } catch (err: unknown) {
       CatchError(err);
