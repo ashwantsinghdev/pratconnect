@@ -44,10 +44,10 @@ export interface onCandidateInterface {
 export type CallType = "pending" | "calling" | "incoming" | "talking" | "end";
 
 export type AudioSrcType =
-  | "/public/sound/ring.mp3"
-  | "/public/sound/reject.mp3"
-  | "/public/sound/busy.mp3"
-  | "/public/sound/chat.mp3";
+  | "/sound/ring.mp3"
+  | "/sound/reject.mp3"
+  | "/sound/busy.mp3"
+  | "/sound/chat.mp3";
 
 function getCallTiming(seconds: number): string {
   const hrs = Math.floor(seconds / 3600)
@@ -275,7 +275,7 @@ const Video = () => {
       await rtc.current?.setLocalDescription(offer);
 
       setStatus("calling");
-      playAudio("/public/sound/ring.mp3", true);
+      playAudio("/sound/ring.mp3", true);
       notify.open({
         message: (
           <h1 className="capitalize font-medium">
@@ -353,7 +353,7 @@ const redirectOnCallEnd = () => {
   const endCallFromLocal = () => {
     endedByMe.current = true;
     setStatus("end");
-    playAudio("/public/sound/reject.mp3");
+    playAudio("/sound/reject.mp3");
     notify.destroy();
 const target = getId(liveActiveSession) || id;
     socket.emit("end", { to: target });
@@ -363,7 +363,7 @@ const target = getId(liveActiveSession) || id;
   const rejectIncomingCall = () => {
     endedByMe.current = true;
     setStatus("pending");
-    playAudio("/public/sound/reject.mp3");
+    playAudio("/sound/reject.mp3");
     notify.destroy();
     const target = getId(liveActiveSession) || id;
     socket.emit("end", { to: target });
@@ -375,7 +375,7 @@ const target = getId(liveActiveSession) || id;
     endedByMe.current = false;
     setStatus("end");
     notify.destroy();
-    playAudio("/public/sound/reject.mp3");
+    playAudio("/sound/reject.mp3");
     endStreaming();
     setOpen(true);
     
