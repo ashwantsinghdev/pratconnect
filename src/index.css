@@ -218,3 +218,9 @@ a.ck.ck-button.ck-on {
 .ck.ck-toolbar .ck-toolbar__separator {
   background: var(--border) !important;
 }
+
+@media (max-width: 1023px) {
+  .Toastify__toast-container--bottom-right {
+    bottom: 5.5rem !important;
+  }
+}

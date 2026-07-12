@@ -1,10 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../pratconnect-api"
-		}
-	]
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "path": "../pratconnect-api"
+        }
+    ]
 }

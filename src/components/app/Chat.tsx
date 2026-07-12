@@ -18,20 +18,16 @@ import CatchError from "../../lib/CatchError";
 import { v4 as uuid } from "uuid";
 import HttpInterceptor from "../../lib/HttpInterceptor";
 import moment from "moment";
-import {  Paperclip, Send, File as FileIcon } from "lucide-react";
+import { Paperclip, Send, File as FileIcon, Download } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shared/avatar-ui";
 import { Bubble, BubbleContent } from "@/components/shared/bubble";
 import {
   Message,
   MessageAvatar,
   MessageContent,
   MessageFooter,
-} from "@/components/shared/message";
+} from "@/components/shared/Message";
 import {
   Attachment,
   AttachmentAction,
@@ -40,7 +36,8 @@ import {
   AttachmentDescription,
   AttachmentMedia,
   AttachmentTitle,
-} from "@/components/shared/attachment";
+} from "@/components/shared/Attachment";
+import { Avatar,AvatarFallback,AvatarImage, } from "../shared/Avatar";
 interface MessageReceivedInterface {
   from: string;
   message: string;
@@ -49,12 +46,12 @@ interface MessageReceivedInterface {
 interface AttachmentUiInterface {
   file: {
     path: string;
+    key: string;
     type: string;
   };
   filename: string;
   onDownload: () => void;
 }
-
 const AttachmentUi: FC<AttachmentUiInterface> = ({
   file,
   filename,
@@ -62,18 +59,37 @@ const AttachmentUi: FC<AttachmentUiInterface> = ({
 }) => {
   if (file.type.startsWith("video/"))
     return (
-      <video
-        className="rounded-lg max-w-65 max-h-75 object-cover"
-        controls
-        src={file.path}
-      ></video>
+      <div className="relative group/media w-fit">
+        <video
+          className="rounded-lg max-w-65 max-h-75 object-cover"
+          controls
+          src={file.path}
+        ></video>
+        <button
+          aria-label="Download"
+          onClick={onDownload}
+          className="absolute top-2 right-2 bg-black/60 text-white p-1.5 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity"
+        >
+          <Download className="h-4 w-4" />
+        </button>
+      </div>
     );
+
   if (file.type.startsWith("image/"))
     return (
-      <img
-        className="rounded-lg max-w-65 max-h-75 object-cover"
-        src={file.path}
-      />
+      <div className="relative group/media w-fit">
+        <img
+          className="rounded-lg max-w-65 max-h-75 object-cover"
+          src={file.path}
+        />
+        <button
+          aria-label="Download"
+          onClick={onDownload}
+          className="absolute top-2 right-2 bg-black/60 text-white p-1.5 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity"
+        >
+          <Download className="h-4 w-4" />
+        </button>
+      </div>
     );
 
   return (
@@ -87,7 +103,7 @@ const AttachmentUi: FC<AttachmentUiInterface> = ({
       </AttachmentContent>
       <AttachmentActions>
         <AttachmentAction aria-label="Download" onClick={onDownload}>
-          <FileIcon className="h-4 w-4" />
+          <Download className="h-4 w-4" />
         </AttachmentAction>
       </AttachmentActions>
     </Attachment>
@@ -127,6 +143,7 @@ const Chat = () => {
   // setting old chats
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setChats(data);
     }
   }, [data]);
@@ -182,13 +199,13 @@ const Chat = () => {
         },
       };
 
-      const localMetaData = {
-        file: {
-          path: url,
-          type: file.type,
-        },
-      };
-
+     const localMetaData = {
+       file: {
+         path: url,
+         key: path,
+         type: file.type,
+       },
+     };
       const attachmentPayload = {
         from: session,
         to: id,
@@ -208,69 +225,91 @@ const Chat = () => {
   };
 
   const download = async (filename: string, path: string) => {
-    const { data } = await HttpInterceptor.post("/storage/download", {
-      path,
-    });
-    const a = document.createElement("a");
-    a.href = data.url;
-    a.download = filename;
-    a.click();
-    a.remove();
+    try {
+      const { data } = await HttpInterceptor.post("/storage/download", {
+        path,
+        filename,
+      });
+      const a = document.createElement("a");
+      a.href = data.url;
+      a.download = filename;
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (err) {
+      CatchError(err);
+    }
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="h-162.5 overflow-auto space-y-4" ref={chatContainer}>
+    <div className="flex flex-col h-full min-h-0">
+      <div
+        className="flex-1 min-h-0 overflow-y-auto space-y-4 p-3 lg:p-0"
+        ref={chatContainer}
+      >
         {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        chats.map((item: any, index: number) => {
-          const isMine =
-            item.from.id === session.id || item.from._id === session.id;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          chats.map((item: any, index: number) => {
+            const isMine =
+              item.from.id === session.id || item.from._id === session.id;
 
-          return (
-            <Message key={index} align={isMine ? "end" : "start"}>
-              <MessageAvatar>
-                <Avatar>
-                  <AvatarImage
-                    src={
-                      isMine
-                        ? session.image || "/public/images/images.jpeg"
-                        : item.from.image || "/public/images/images.jpeg"
-                    }
-                    alt={isMine ? "You" : item.from.fullname}
-                  />
-                  <AvatarFallback>
-                    {isMine ? "ME" : item.from.fullname?.[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </MessageAvatar>
-              <MessageContent>
-                <Bubble variant={isMine ? undefined : "muted"}>
-                  <BubbleContent className="space-y-2 min-w-16 max-w-[320px]">
-                    {!isMine && (
-                      <h1 className="font-medium capitalize text-sm">
-                        {item.from.fullname}
-                      </h1>
-                    )}
-                    {item.file && (
+            return (
+              <Message key={index} align={isMine ? "end" : "start"}>
+                <MessageAvatar>
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        isMine
+                          ? session.image || "/public/images/images.jpeg"
+                          : item.from.image || "/public/images/images.jpeg"
+                      }
+                      alt={isMine ? "You" : item.from.fullname}
+                    />
+                    <AvatarFallback>
+                      {isMine ? "ME" : item.from.fullname?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </MessageAvatar>
+                <MessageContent>
+                  {item.file ? (
+                    <div
+                      className={cn(
+                        "space-y-1",
+                        isMine ? "self-end" : "self-start",
+                      )}
+                    >
+                      {!isMine && (
+                        <h1 className="font-medium capitalize text-sm">
+                          {item.from.fullname}
+                        </h1>
+                      )}
                       <AttachmentUi
                         file={item.file}
                         filename={item.message}
-                        onDownload={() =>
-                          download(item.message, item.file.path)
-                        }
+                        onDownload={() => download(item.message, item.file.key)}
                       />
-                    )}
-                    {!item.file && item.message}
-                  </BubbleContent>
-                </Bubble>
-                <MessageFooter>
-                  {moment().format("MMM DD, YYYY hh:mm:ss A")}
-                </MessageFooter>
-              </MessageContent>
-            </Message>
-          );
-        })}
+                    </div>
+                  ) : (
+                    <Bubble variant={isMine ? undefined : "muted"}>
+                      <BubbleContent className="space-y-2 min-w-16 max-w-[320px]">
+                        {!isMine && (
+                          <h1 className="font-medium capitalize text-sm">
+                            {item.from.fullname}
+                          </h1>
+                        )}
+                        {item.message}
+                      </BubbleContent>
+                    </Bubble>
+                  )}
+                  <MessageFooter>
+                    {moment(item.createdAt).format("MMM DD, YYYY hh:mm:ss A")}
+                  </MessageFooter>
+                </MessageContent>
+              </Message>
+            );
+          })
+        }
       </div>
 
       <div className="p-3">

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/shared/Button";
 import { Label } from "../components/shared/Label";
-import { Input } from "../components/shared/Input";
+import { Input } from "./shared/Input";
 
 import {
   Card,
@@ -14,6 +14,7 @@ import Form, { type FormDataType } from "./shared/Form";
 import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
+import { toast } from "react-toastify";
 import { ArrowRight } from "lucide-react";
 import Logo from "./shared/Logo";
 const Login = () => {
@@ -22,12 +23,12 @@ const Login = () => {
   const login = async (values: FormDataType) => {
     try {
       await HttpInterceptor.post("/auth/login", values);
+      toast.success("Logged in successfully!",{position:"bottom-right"});
       navigate("/app");
     } catch (err: unknown) {
       CatchError(err);
     }
   };
-
   return (
     <div className="min-h-screen bg-background flex items-center justify-center relative">
       <AuthBackdrop />

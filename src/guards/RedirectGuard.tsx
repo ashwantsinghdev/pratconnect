@@ -2,8 +2,7 @@ import { useContext, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import Context from "../Context";
-import { Skeleton } from "antd";
-
+import { Skeleton } from "../components/shared/Skeleton";
 const RedirectGuard = () => {
   const { session, setSession } = useContext(Context);
 

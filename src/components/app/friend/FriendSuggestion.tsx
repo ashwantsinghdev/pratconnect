@@ -3,7 +3,8 @@ import "swiper/css";
 import SmallButton from "../../shared/SmallButton";
 import useSWR, { mutate } from "swr";
 import Fetcher from "../../../lib/Fetcher";
-import { Empty, Skeleton } from "antd";
+import { Empty } from "@/components/shared/Empty";
+import { Skeleton } from "@/components/shared/Skeleton";
 import CatchError from "../../../lib/CatchError";
 import HttpInterceptor from "../../../lib/HttpInterceptor";
 import { toast } from "react-toastify";
@@ -47,7 +48,9 @@ const FriendsSuggestion = () => {
           }}
           className="mySwiper"
         >
-          {data.map((item: any, index: number) => (
+          {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data.map((item: any, index: number) => (
             <SwiperSlide key={index}>
               <div className="flex flex-col items-center gap-2 border border-border bg-card p-3 rounded-xl capitalize">
                 <img

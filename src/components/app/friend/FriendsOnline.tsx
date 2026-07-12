@@ -10,6 +10,7 @@ import Fetcher from "@/lib/Fetcher";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
+import IconButton from "@/components/shared/IconButton";
 
 const FriendsOnline = () => {
   const [onlineUsers, setOnlineUser] = useState([]);
@@ -25,9 +26,9 @@ const FriendsOnline = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const generateActiveSession = (url: string, user: any) => {
+  const generateActiveSession = (url: string, user: any, autoCall = false) => {
     setLiveActiveSession(user);
-    navigate(url);
+    navigate(url, autoCall ? { state: { autoCall: true } } : undefined);
   };
 
   useEffect(() => {
@@ -58,57 +59,36 @@ const FriendsOnline = () => {
               .filter((item: any) => isFriend(item.id))
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .map((item: any, index) => (
-                <div key={index} className="flex">
-                  <div className="flex gap-3">
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-3 cursor-pointer"
+                  onClick={() =>
+                    generateActiveSession(`/app/friends/${item.id}`, item)
+                  }
+                >
+                  <div className="flex items-center gap-3">
                     <img
                       src={item.image || "/public/images/avt.jpeg"}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>
-                      <h1 className="font-medium mb-1 capitalize">
+                      <h1 className="font-medium capitalize">
                         {item.fullname}
                       </h1>
-                      <div className="flex items-center gap-3">
-                        <label
-                          className={`capitalize-first text-[10px] font-medium text-chart-2`}
-                        >
-                          Online
-                        </label>
-
-                        <button
-                          className="cursor-pointer"
-                          onClick={() =>
-                            generateActiveSession(`/app/chat/${item.id}`, item)
-                          }
-                        >
-                          <i className="ri-chat-ai-line text-accent"></i>
-                        </button>
-
-                        <button
-                          className="cursor-pointer"
-                          onClick={() =>
-                            generateActiveSession(
-                              `/app/audio-chat/${item.id}`,
-                              item,
-                            )
-                          }
-                        >
-                          <i className="ri-phone-line text-chart-4"></i>
-                        </button>
-
-                        <button
-                          className="cursor-pointer"
-                          onClick={() =>
-                            generateActiveSession(
-                              `/app/video-chat/${item.id}`,
-                              item,
-                            )
-                          }
-                        >
-                          <i className="ri-video-on-ai-line text-chart-2"></i>
-                        </button>
-                      </div>
+                      <label className="text-[10px] font-medium text-chart-2">
+                        Online
+                      </label>
                     </div>
+                  </div>
+
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <IconButton
+                      type="primary"
+                      icon="chat-ai-line"
+                      onClick={() =>
+                        generateActiveSession(`/app/friends/${item.id}`, item)
+                      }
+                    />
                   </div>
                 </div>
               ))}

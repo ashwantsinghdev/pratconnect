@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Badge } from "./shared/Badge";
 import { Eyebrow } from "./shared/Eyebrow";
+import Logo from "./shared/Logo";
 
 const features = [
   {
@@ -68,9 +69,60 @@ const steps = [
   },
 ];
 
+const Navbar = () => (
+  <header className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-border">
+    <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <Link to="/">
+        <Logo />
+      </Link>
+      <div className="flex items-center gap-3">
+        <Link to="/login">
+          <button className="text-sm font-medium text-foreground hover:text-primary px-4 py-2 transition-colors">
+            Log in
+          </button>
+        </Link>
+        <Link to="/signup">
+          <button className="text-sm inline-flex items-center gap-1.5 bg-primary text-primary-foreground hover:opacity-90 px-4 py-2 rounded-(--radius) font-semibold transition-opacity">
+            Sign up
+          </button>
+        </Link>
+      </div>
+    </div>
+  </header>
+);
+
+const Footer = () => (
+  <footer className="bg-card border-t border-border px-6 py-12">
+    <div className="max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+        <Logo />
+        <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-muted-foreground">
+          <Link to="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <Link to="/login" className="hover:text-primary transition-colors">
+            Log in
+          </Link>
+          <Link to="/signup" className="hover:text-primary transition-colors">
+            Sign up
+          </Link>
+        </div>
+      </div>
+      <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <span>
+          © {new Date().getFullYear()} PratConnect. All rights reserved.
+        </span>
+        <span>Built for friends, not feeds.</span>
+      </div>
+    </div>
+  </footer>
+);
+
 const Home = () => {
   return (
     <div className="bg-background text-foreground font-sans">
+      <Navbar />
+
       {/* Hero */}
       <section className="px-6 pt-24 pb-20 md:pt-32 md:pb-28 max-w-3xl mx-auto text-center">
         <Eyebrow>Real-time social, without the noise</Eyebrow>
@@ -166,6 +218,8 @@ const Home = () => {
           </button>
         </Link>
       </section>
+
+      <Footer />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Label } from "../components/shared/Label";
-import { Input } from "../components/shared/Input"
+import { Input } from "./shared/Input";
 import { Button } from "../components/shared/Button";
 
 import {
@@ -14,6 +14,7 @@ import Form, { type FormDataType } from "./shared/Form";
 import AuthBackdrop from "./shared/AuthBackdrop";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import CatchError from "../lib/CatchError";
+import { toast } from "react-toastify";
 import { ArrowRight } from "lucide-react";
 import Logo from "./shared/Logo";
 const Signup = () => {
@@ -22,6 +23,7 @@ const Signup = () => {
   const signup = async (values: FormDataType) => {
     try {
       await HttpInterceptor.post("/auth/signup", values);
+      toast.success("Account created! Please log in.",{position:"bottom-right"});
       navigate("/login");
     } catch (err) {
       CatchError(err);
@@ -85,7 +87,7 @@ const Signup = () => {
 
               <Button
                 type="submit"
-                className="w-full rounded-full mt-2 h-12 text-base font-semibold bg-gradient-to-r from-accent to-amber-400 text-white hover:opacity-90"
+                className="w-full rounded-full mt-2 h-12 text-base font-semibold bg-linear-to-r from-accent to-amber-400 text-white hover:opacity-90"
               >
                 Create account
                 <ArrowRight className="ml-1 h-5 w-5" />

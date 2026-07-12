@@ -2,8 +2,7 @@ import { useContext, useEffect } from "react";
 import Context from "../Context";
 import HttpInterceptor from "../lib/HttpInterceptor";
 import { Outlet, Navigate } from "react-router-dom";
-import { Skeleton } from "antd";
-
+import { Skeleton } from "../components/shared/Skeleton";
 const AuthGuard = () => {
   const { session, setSession } = useContext(Context);
 

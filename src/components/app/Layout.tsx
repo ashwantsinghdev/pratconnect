@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import Avatar from "../shared/Avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "../shared/Avatar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Dashboard from "./Dashboard";
 import Context from "../../Context";
@@ -16,14 +16,16 @@ import Fetcher from "../../lib/Fetcher";
 import CatchError from "../../lib/CatchError";
 import { useMediaQuery } from "react-responsive";
 import Logo from "../shared/Logo";
-import IconButton from "../shared/IconButton";
+
 import { cn } from "@/lib/utils";
-
+import { Button } from "../shared/Button";
+import { Phone, Video } from "lucide-react";
 import socket from "../../lib/Socket";
+import getId from "../../lib/getId";
 import type { AudioSrcType, onOfferInterface } from "./Video";
-import { notification } from "antd";
+import { useNotify } from "../shared/useNotify";
 import { Card, CardHeader, CardTitle, CardContent } from "../shared/Card";
-
+import MobileTabBar from "./MobileTabBar";
 import FriendsSuggestion from "./friend/FriendSuggestion";
 import FriendRequest from "./friend/FriendsRequest";
 import FriendsOnline from "./friend/FriendsOnline";
@@ -36,6 +38,7 @@ const ActiveSessionUis = ({
   pathname,
   friendId,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   liveActiveSession: any;
   navigate: ReturnType<typeof useNavigate>;
   pathname: string;
@@ -49,7 +52,7 @@ const ActiveSessionUis = ({
 
   if (!liveActiveSession) return null;
 
-   const showCallIcons = pathname.startsWith("/app/chat/");
+  const showCallIcons = pathname.startsWith("/app/chat/");
 
   return (
     <div className="flex items-center justify-between w-full">
@@ -67,27 +70,33 @@ const ActiveSessionUis = ({
       </div>
       {showCallIcons && friendId && (
         <div className="flex gap-2">
-          <button
+          <Button
+            size="icon"
+            variant="secondary"
             aria-label="Start audio call"
             onClick={() => navigate(`/app/audio-chat/${friendId}`)}
-            className="w-9 h-9 rounded-full bg-muted hover:bg-accent hover:text-white text-foreground flex items-center justify-center transition-colors"
           >
-            <i className="ri-phone-line"></i>
-          </button>
-          <button
+            <Phone />
+          </Button>
+          <Button
+            size="icon"
+            variant="default"
             aria-label="Start video call"
-            onClick={() => navigate(`/app/video-chat/${friendId}`)}
-            className="w-9 h-9 rounded-full bg-muted hover:bg-accent hover:text-white text-foreground flex items-center justify-center transition-colors"
+            onClick={() =>
+              navigate(`/app/video-chat/${friendId}`, {
+                state: { autoCall: true },
+              })
+            }
           >
-            <i className="ri-vidicon-line"></i>
-          </button>
+            <Video />
+          </Button>
         </div>
       )}
     </div>
   );
 };
 const Layout = () => {
-  const isMobile = useMediaQuery({ query: "max-width:1224px" });
+  const isMobile = useMediaQuery({ query: "(max-width: 1023px)" });
   const [isCollapsed, setIsCollapsed] = useState(false);
   const collapseSize = isMobile ? 0 : 140;
   const expandedSize = isMobile ? 280 : 350;
@@ -98,16 +107,35 @@ const Layout = () => {
     : isCollapsed
       ? collapseSize
       : expandedSize;
-  const { liveActiveSession, setLiveActiveSession, setSdp } =
-    useContext(Context);
+
+  const {
+    liveActiveSession,
+    setLiveActiveSession,
+    setSdp,
+    session,
+    setSession,
+  } = useContext(Context);
   const { pathname } = useLocation();
+  const isChatRoute =
+    pathname.startsWith("/app/friends") || pathname.startsWith("/app/chat/");
   const params = useParams();
   const paramsArray = Object.keys(params);
+  const activeChatFriendIdRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (pathname.startsWith("/app/friends/") && params.id) {
+      activeChatFriendIdRef.current = params.id;
+    } else {
+      activeChatFriendIdRef.current = undefined;
+    }
+  }, [pathname, params.id]);
+
+  const hideOuterHeaderOnMobile =
+    isMobile && pathname.startsWith("/app/friends/") && !!params.id;
 
   const navigate = useNavigate();
   const audio = useRef<HTMLAudioElement | null>(null);
-  const [notify, notifyUi] = notification.useNotification();
-
+  const notify = useNotify();
   const stopAudio = () => {
     if (!audio.current) return;
     const player = audio.current;
@@ -142,33 +170,38 @@ const Layout = () => {
     setSdp(payload);
     setLiveActiveSession(payload.from);
     if (payload.type === "video")
-      return navigate(`/app/video-chat/${payload.from.socketId}`);
+      return navigate(`/app/video-chat/${getId(payload.from)}`);
     if (payload.type === "audio")
-      return navigate(`/app/audio-chat/${payload.from.socketId}`);
+      return navigate(`/app/audio-chat/${getId(payload.from)}`);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const startChat = (payload: any) => {
     notify.destroy();
     setLiveActiveSession(payload.from);
-    navigate(`/app/chat/${payload.from.id}`);
+    navigate(`/app/friends/${getId(payload.from)}`);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onMessage = (payload: any) => {
-    if (location.href.includes("/app/chat")) return;
+    const senderId = getId(payload.from);
+    if (
+      activeChatFriendIdRef.current &&
+      senderId &&
+      activeChatFriendIdRef.current === senderId
+    )
+      return;
     platAudio("/public/sound/chat.mp3");
     notify.open({
       message: (
         <h1 className="font-medium capitalize">{payload.from.fullname}</h1>
       ),
       description: payload.message,
-      placement: "bottomRight",
       duration: 30,
       actions: [
         <button
           key="chat"
-          className="bg-green-400 hover:bg-green-500 text-white rounded px-6 py-2"
+          className="bg-accent hover:opacity-90 text-white rounded-lg px-6 py-2"
           onClick={() => startChat(payload)}
         >
           Start chat
@@ -191,8 +224,6 @@ const Layout = () => {
       socket.off("message", onMessage);
     };
   }, []);
-
-  const { session, setSession } = useContext(Context);
 
   const menus = [
     { icon: "ri-home-9-line", href: "/app/dashboard", label: "dashboard" },
@@ -236,55 +267,100 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <nav className="lg:hidden flex justify-between items-center sticky top-0 z-[20000] w-full p-4 bg-linear-to-br from-indigo-900 via-purple-800 to-blue-900">
-        <Logo />
-        <div className="flex gap-4">
-          <IconButton
-            onClick={logout}
-            icon="logout-circle-line"
-            type="success"
-          />
-          <Link to="/app/friends">
-            <IconButton icon="chat-ai-line" type="danger" />
-          </Link>
-          <IconButton
-            onClick={() => setIsCollapsed((prev) => !prev)}
-            icon="menu-3-line"
-            type="warning"
-          />
-        </div>
-      </nav>
+    <div
+      className={cn(
+        "min-h-screen",
+        isMobile && isChatRoute && "h-dvh flex flex-col overflow-hidden",
+      )}
+    >
+      <nav className="lg:hidden shrink-0 flex justify-between items-center sticky top-0 z-20000 w-full p-4 bg-sidebar border-b border-sidebar-border">
+        <button
+          aria-label="Open menu"
+          onClick={() => setIsCollapsed((prev) => !prev)}
+          className="w-9 h-9 rounded-lg bg-muted hover:bg-muted/70 text-foreground flex items-center justify-center transition-colors"
+        >
+          <i className="ri-menu-3-line text-lg"></i>
+        </button>
 
+        <Logo />
+
+        <button
+          aria-label="Update profile picture"
+          onClick={uploadImage}
+          className="shrink-0"
+        >
+          <Avatar className="w-8 h-8 ring-2 ring-border">
+            <AvatarImage
+              src={session?.image || "/images/images.jpeg"}
+              alt={session?.fullname}
+            />
+            <AvatarFallback>
+              {session?.fullname?.[0]?.toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </button>
+      </nav>
       {isMobile && isCollapsed && (
         <div
-          className="fixed inset-0 bg-foreground/40 z-[10000]"
+          className="fixed inset-0 bg-foreground/40 z-10000"
           onClick={() => setIsCollapsed(false)}
         />
       )}
 
       <aside
-        className="bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-[20000]"
-        style={{ width: leftAsideSize, transition: "0.2s" }}
+        className={cn(
+          "bg-sidebar border-r border-sidebar-border fixed top-0 left-0 h-full lg:p-8 overflow-auto z-20000 transition-transform duration-200 ease-in-out",
+          "max-lg:w-[85vw] max-lg:max-w-70",
+          isMobile && (isCollapsed ? "translate-x-0" : "-translate-x-full"),
+        )}
+        style={{
+          width: isMobile ? undefined : leftAsideSize,
+          transition: "0.2s",
+        }}
       >
         <div
-          className="space-y-8 h-full lg:rounded-2xl p-8"
+          className="space-y-8 h-full lg:rounded-2xl p-8 relative"
           style={sidebarStyle}
         >
+          {isMobile && (
+            <button
+              aria-label="Close menu"
+              onClick={() => setIsCollapsed(false)}
+              className="lg:hidden absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center z-10"
+            >
+              <i className="ri-close-line"></i>
+            </button>
+          )}
           <div className="flex justify-center">
             {leftAsideSize === collapseSize ? (
               <i className="ri-user-fill text-xl text-sidebar-foreground animate__animated animate__fadeIn"></i>
             ) : (
               <div className="animate__animated animate__fadeIn capitalize">
                 {session && (
-                  <Avatar
-                    title={session.fullname}
-                    subtitle={session.email}
-                    image={session.image || "/images/images.jpeg"}
-                    titleColor="var(--sidebar-foreground)"
-                    subtitleColor="var(--muted-foreground)"
+                  <div
                     onClick={uploadImage}
-                  />
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
+                    <Avatar>
+                      <AvatarImage
+                        src={session.image || "/images/images.jpeg"}
+                        alt={session.fullname}
+                      />
+                      <AvatarFallback>
+                        {session.fullname?.[0]?.toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex flex-col min-w-0">
+                      <h1 className="font-medium capitalize text-sidebar-foreground truncate">
+                        {session.fullname}
+                      </h1>
+
+                      <p className="text-xs text-muted-foreground truncate">
+                        {session.email}
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -329,63 +405,90 @@ const Layout = () => {
       </aside>
 
       <section
-        className="lg:py-8 lg:px-1 flex lg:flex-row flex-col gap-8 p-6"
+        className={cn(
+          "lg:py-8 lg:px-1 flex lg:flex-row flex-col gap-8 p-6 pb-24 lg:pb-8",
+          isMobile &&
+            isChatRoute &&
+            "flex-1 min-h-0 overflow-hidden px-0 pt-0 pb-20 gap-0",
+        )}
         style={{
           width: isMobile ? "100%" : `calc(100% - ${leftAsideSize}px)`,
           marginLeft: isMobile ? 0 : leftAsideSize,
           transition: "0.2s",
         }}
       >
-        <div className="flex-1 capitalize">
-          <Card>
-            <CardHeader className="border-b border-border">
-              <CardTitle>
-                <div className="flex gap-4 items-center">
-                  <button
-                    className="lg:block hidden bg-muted w-10 h-10 rounded-full hover:bg-muted/70"
-                    onClick={() => setIsCollapsed((prev) => !prev)}
-                  >
-                    <i className="ri-arrow-left-line"></i>
-                  </button>
-                  <h1 className="flex-1">
-                    {paramsArray.length === 0 ||
-                    pathname.startsWith("/app/friends") ? (
-                      getPathname(
-                        pathname.startsWith("/app/friends")
-                          ? "/app/friends"
-                          : pathname,
-                      )
-                    ) : (
-                      <ActiveSessionUis
-                        liveActiveSession={liveActiveSession}
-                        navigate={navigate}
-                        pathname={pathname}
-                        friendId={params.id}
-                      />
-                    )}
-                  </h1>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+        <div
+          className={cn(
+            "flex-1 capitalize",
+            isMobile && isChatRoute && "flex flex-col min-h-0",
+          )}
+        >
+          <Card
+            className={cn(
+              isMobile && "rounded-none border-0 bg-transparent shadow-none",
+              isMobile && isChatRoute && "flex-1 min-h-0 flex flex-col",
+            )}
+          >
+            {!hideOuterHeaderOnMobile && (
+              <CardHeader
+                className={cn(
+                  "border-b border-border",
+                  isMobile && isChatRoute && "shrink-0",
+                )}
+              >
+                <CardTitle>
+                  <div className="flex gap-4 items-center">
+                    <button
+                      className="lg:block hidden bg-muted w-10 h-10 rounded-full hover:bg-muted/70"
+                      onClick={() => setIsCollapsed((prev) => !prev)}
+                    >
+                      <i className="ri-arrow-left-line"></i>
+                    </button>
+                    <h1 className="flex-1">
+                      {paramsArray.length === 0 ||
+                      pathname.startsWith("/app/friends") ? (
+                        getPathname(
+                          pathname.startsWith("/app/friends")
+                            ? "/app/friends"
+                            : pathname,
+                        )
+                      ) : (
+                        <ActiveSessionUis
+                          liveActiveSession={liveActiveSession}
+                          navigate={navigate}
+                          pathname={pathname}
+                          friendId={params.id}
+                        />
+                      )}
+                    </h1>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+            )}
+            <CardContent
+              className={cn(
+                isMobile &&
+                  isChatRoute &&
+                  "flex-1 min-h-0 flex flex-col p-0 overflow-hidden",
+              )}
+            >
               {pathname === "/app" ? <Dashboard /> : <Outlet />}
             </CardContent>
           </Card>
         </div>
-
         {!pathname.startsWith("/app/friends") &&
           !pathname.startsWith("/app/chat/") && (
-            <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8">
+            <aside className="lg:w-100 lg:pr-6 lg:order-2 order-1 flex flex-col gap-8 mb-4 lg:mb-0">
               <FriendRequest />
               <FriendsSuggestion />
               <FriendsOnline />
             </aside>
           )}
-
-        {notifyUi}
       </section>
+      <MobileTabBar />
     </div>
   );
-};
+};;
 
 export default Layout;
+
