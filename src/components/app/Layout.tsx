@@ -249,23 +249,17 @@ const Layout = () => {
       if (!input.files) return;
       const file = input.files[0];
       const path = `profile-pictures/${uuid()}.png`;
-      const payload = { path, type: file.type, status: "private" };
+      const payload = { path, type: file.type, status: "public" };
       try {
         const options = { headers: { "Content-Type": file.type } };
-     const { data } = await HttpInterceptor.post("/storage/upload", payload);
-     await HttpInterceptor.put(data.url, file, options);
-     const { data: download } = await HttpInterceptor.post(
-       "/storage/download",
-       {
-         path,
-       },
-     );
-     const { data: user } = await HttpInterceptor.put("/auth/profile-picture", {
-       path: download.url,
-     });
-     setSession({ ...session, image: user.image });
-     mutate("/auth/refresh-token");
-       mutate("/auth/refresh-token");
+        const { data } = await HttpInterceptor.post("storage/upload", payload);
+        await HttpInterceptor.put(data.url, file, options);
+        const { data: user } = await HttpInterceptor.put(
+          "/auth/profile-picture",
+          { path },
+        );
+        setSession({ ...session, image: user.image });
+        mutate("/auth/refresh-token");
         mutate("/auth/refresh-token");
       } catch (err) {
         console.log(err);
